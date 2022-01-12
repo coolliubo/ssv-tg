@@ -1,27 +1,26 @@
 {
   "name": "ssv",
   "version": "1.0.0",
-  "description": "ssv网站采集发布外链",
+  "description": "ssv网站外链发布",
   "main": "crawl.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/coolliubo/ssv.git"
+    "url": "https://github.com/coolliubo/ssv-tg.git"
   },
   "author": "ZhiHua",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/coolliubo/ssv.git/issues"
+    "url": "https://github.com/coolliubo/ssv-tg.git/issues"
   },
-  "homepage": "https://github.com/coolliubo/ssv",
+  "homepage": "https://github.com/coolliubo/ssv-tg",
   "dependencies": {
     "@actions/core": "^1.2.7",
     "@actions/github": "^4.0.0",
-    "crypto": "^1.0.1",
     "mysql2": "^2.3.3",
-    "puppeteer": "^9.1.1",
+    "puppeteer": "^13.0.1",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
     "sqlite3": "^5.0.2"
