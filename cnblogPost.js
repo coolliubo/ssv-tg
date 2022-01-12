@@ -32,11 +32,12 @@ const pool = mysql.createPool({
 });
 
 async function postArticles(row, page) {
-    await page.goto('https://mp.csdn.net/mp_blog/creation/editor', { timeout: 60000 })
+    await page.goto('https://i.cnblogs.com/posts/edit', { timeout: 60000 })
     await sleep(1000)
-    await page.waitForSelector('#txtTitle', { timeout: 15000 })
+    let selecter ='#post-title'
+    await page.waitForSelector(selecter, { timeout: 15000 })
     //await page.evaluate((selecter, text) => document.querySelector(selecter).value = text, '#txtTitle', row.title)
-    await page.type('#txtTitle',row.title+'破解下载')
+    await page.type(selecter,row.title+'破解下载')
     await sleep(200)
     //await findFrames(page)
     const frame = ( await page.mainFrame().childFrames() )[0];//通过索引得到我的iframe
@@ -44,27 +45,30 @@ async function postArticles(row, page) {
     //await page.type('#title',row.title)
     //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
     //await page.$eval('#content', el => el.value = row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
-    await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, 'body > p', content)
-    let selecter =''
-    selecter = '#moreDiv > div:nth-child(5) > div > label.el-radio.originalRadio > span.el-radio__input > span' //文章类型
+    await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, '#tinymce', content)
+    
+    //selecter = 'body > cnb-root > cnb-layout > div.main > div.content.grid-noGutter > div.right.grid-column-noGutter-noWrap > div > cnb-spinner > div > cnb-post-editing-v2 > cnb-post-editor > div.panel.panel--main > cnb-collapse-panel.ng-tns-c82-4.ng-star-inserted > div.panel-content.ng-tns-c82-4.ng-trigger.ng-trigger-openClosePanel > cnb-category-selector-panel > cnb-collapse-panel > div.panel-content.ng-tns-c82-6.ng-trigger.ng-trigger-openClosePanel > cnb-category-selector > div > div:nth-child(1) > label' //文章类型
+    selecter = '#\\32 093554'
     await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
     await sleep(200)
     //await page.click("#moreDiv > div.el-form-item.mb8.mt16.is-required.is-no-asterisk > div > div > label:nth-child(3) > span.el-radio__input")  //封面
-    selecter = '#moreDiv > div.el-form-item.mb8.mt16.is-required.is-no-asterisk > div > div > label:nth-child(3) > span.el-radio__input' //封面
+/*     selecter = '#moreDiv > div.el-form-item.mb8.mt16.is-required.is-no-asterisk > div > div > label:nth-child(3) > span.el-radio__input' //封面
+    await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter) */
+    // await sleep(200)
+    // selecter = '#moreDiv > div.el-form-item.mb8.mt16.form-item-flex.is-no-asterisk > div > div > div > button' //标签
+    // await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
+    // await sleep(200)
+    // await page.evaluate((selecter) => document.querySelector(selecter).click(), '#pane-0 > span:nth-child(2)')
+    // await sleep(200)
+    //return Promise.reject(new Error('临时退出'))
+    selecter = 'body > cnb-root > cnb-layout > div.main > div.content.grid-noGutter > div.right.grid-column-noGutter-noWrap > div > cnb-spinner > div > cnb-post-editing-v2 > cnb-post-editor > div.panel--bottom > cnb-spinner > div > cnb-submit-buttons > button:nth-child(1)'
     await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
-    await sleep(200)
-    selecter = '#moreDiv > div.el-form-item.mb8.mt16.form-item-flex.is-no-asterisk > div > div > div > button' //标签
-    await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
-    await sleep(200)
-    await page.evaluate((selecter) => document.querySelector(selecter).click(), '#pane-0 > span:nth-child(2)')
-    await sleep(200)
-    await page.evaluate((selecter) => document.querySelector(selecter).click(), '#moreDiv > div.el-form-item.publish-opt-box.is-no-asterisk > div > div > div.btn-box > button.el-button.btn-outline-danger.ml16.el-button--primary.is-round')
     console.log('click:#publish')
-    await waitForString(page, '#alertSuccess > div > div.pos-top > div.text-center.status-box > div', 'https://blog.csdn.net/eroslp/article/details', 30000)
+    await waitForString(page, 'body > cnb-root > cnb-layout > div.main > div.content.grid-noGutter > div.right.grid-column-noGutter-noWrap > div > cnb-spinner > div > cnb-post-saved > cnb-post-saved-info > div.message-panel-header', '保存成功', 30000)
         .catch(async (error) => {
             console.log('再次点击')
-            await page.click('#moreDiv > div.el-form-item.publish-opt-box.is-no-asterisk > div > div > div.btn-box > button.el-button.btn-outline-danger.ml16.el-button--primary.is-round')
-            await waitForString(page, '#alertSuccess > div > div.pos-top > div.text-center.status-box > div', 'https://blog.csdn.net/eroslp/article/details', 30000)
+            await page.click(selecter)
+            await waitForString(page, 'body > cnb-root > cnb-layout > div.main > div.content.grid-noGutter > div.right.grid-column-noGutter-noWrap > div > cnb-spinner > div > cnb-post-saved > cnb-post-saved-info > div.message-panel-header', '保存成功', 30000)
         })
     await sleep(100)
     //return Promise.reject(new Error('临时退出'))
@@ -87,10 +91,10 @@ async function main() {
         await dialog.dismiss();
     })
     let cookies = []
-    cookies = JSON.parse(fs.readFileSync('./csdn.json', 'utf8'))
+    cookies = JSON.parse(fs.readFileSync('./cnblog.json', 'utf8'))
     await page.setCookie(...cookies)
     console.log("写入cookies")
-    await page.goto('https://mp.csdn.net/', { timeout: 60000 })
+    await page.goto('https://www.cnblogs.com/eroslp/', { timeout: 60000 })
     //await page.click('body > header > div > ul.nav-right > li.nav-login.no > a.signin-loader > span')
 /*     await page.waitForSelector('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)', { timeout: 15000 })
     await sleep(200)
@@ -115,7 +119,7 @@ async function main() {
     //return Promise.reject(new Error('调试退出'))
     console.log(`*****************开始postArticles ${Date()}*******************\n`)
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
-    let sql = "SELECT * FROM articles WHERE csdn = 0 and posted = 1  order by  date asc limit 10;"
+    let sql = "SELECT * FROM articles WHERE cnblog = 0 and posted = 1  order by  date asc limit 10;"
     //let sql = "SELECT * FROM articles WHERE posted = 1 limit 1;"
     let r = await pool.query(sql)
     let i = 0
@@ -127,7 +131,7 @@ async function main() {
         if (row.url) await postArticles(row, page)
             .then(async row => {
                 let sql, arr
-                sql = 'UPDATE articles SET  csdn=1 WHERE id=?'
+                sql = 'UPDATE articles SET  cnblog=1 WHERE id=?'
                 arr = [row.id]
                 sql = await pool.format(sql, arr)
                 //console.log(row);
