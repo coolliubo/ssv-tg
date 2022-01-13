@@ -35,7 +35,7 @@ jobs:
               run: node csdnPost.js # > report2.txt       
             - name: Commit report
               run: |
-#                echo  "csdnPost运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
+                echo  "csdnPost运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
                 git config --global user.name 'coolliubo'
                 git config --global user.email 'coolliubo@gmail.com'
                 git commit -am "Automated report $(date '+%Y/%m/%d')"
