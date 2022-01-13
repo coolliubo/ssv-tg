@@ -91,27 +91,29 @@ async function main() {
     await page.setCookie(...cookies)
     console.log("写入cookies")
     await page.goto('https://mp.csdn.net/', { timeout: 60000 })
-    //await page.click('body > header > div > ul.nav-right > li.nav-login.no > a.signin-loader > span')
-/*     await page.waitForSelector('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)', { timeout: 15000 })
-    await sleep(200)
-    page.click('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)')
-    await sleep(200)
-    await page.type('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(1) > div > input', setup.usr.csdn)
-    await page.type('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(2) > div > input', setup.pwd.csdn)
-    //await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'#user_login',setup.usr.kxnn)
-    //await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'#user_pass',setup.pwd.kxnn)
-    await sleep(200)
-    //return Promise.reject(new Error('临时退出'))
-    await Promise.all([
-        page.waitForNavigation({ timeout: 60000 }),
-        //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
-        page.click('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(4) > button'),
-    ])
-        .then(() => console.log('登录成功'))
-    await sleep(300) */
-    //return
+    let selecter = '#app > div > div > div > div.el-col.el-col-24 > section > div > div.scroll_main.el-scrollbar__wrap.el-scrollbar__wrap--hidden-default > div > section > aside > div.createBtn > a'
+    await page.waitForSelector(selecter, { timeout: 3000 })
+    .catch(async (error)=>{
+        console.log(await page.$eval('body', el => el.innerText))
+        selecter = 'body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)'
+        await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
+        await sleep(200)
+        await page.type('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(1) > div > input', setup.usr.csdn)
+        await page.type('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(2) > div > input', setup.pwd.csdn)
+        await Promise.all([
+            page.waitForNavigation({ timeout: 60000 }),
+            //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
+            page.click('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(4) > button'),
+        ])
+            .then(() => console.log('登录成功'))
+    })
+    await sleep(1000)
     cookies = await page.cookies();
     fs.writeFileSync('./csdn.json', JSON.stringify(cookies, null, '\t'))
+/*     
+    //await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'#user_login',setup.usr.kxnn)
+    //await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'#user_pass',setup.pwd.kxnn)
+ */
     //return Promise.reject(new Error('调试退出'))
     console.log(`*****************开始postArticles ${Date()}*******************\n`)
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
@@ -137,7 +139,7 @@ async function main() {
             })
             .catch(error => console.log('error: ', error.message))
     }
-    await pool.end()
+    await pool.end() 
     if (runId ? true : false) await browser.close()
     //await browser.close()
 }
