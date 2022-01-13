@@ -105,3 +105,7 @@ exports.md5 = function md5(str) {
   const crypto = require('crypto')
   return crypto.createHash('md5').update(str).digest('hex')
 }
+exports.deleteHtmlTag = function deleteHtmlTag(str){
+  str = str.replace(/<[^>]+>|&[^>]+;/g,"").trim();//去掉所有的html标签和&nbsp;之类的特殊符合
+  return str;
+ }
