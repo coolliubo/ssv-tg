@@ -41,12 +41,14 @@ async function postArticles(row, page) {
     await sleep(200)
     //await findFrames(page)
     const frame = ( await page.mainFrame().childFrames() )[0];//通过索引得到我的iframe
+    console.log('frame',await frame.$eval('body', el => el.innerHTML));
     let content = row.content + `<br>原文地址:<a href="${row.url_kxnn}">${row.title}</a>`
     //await page.type('#title',row.title)
     //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
     //await page.$eval('#content', el => el.value = row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
+
     await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, '#tinymce', content)
-    
+    console.log('frame2',await frame.$eval('body', el => el.innerHTML));
     //selecter = 'body > cnb-root > cnb-layout > div.main > div.content.grid-noGutter > div.right.grid-column-noGutter-noWrap > div > cnb-spinner > div > cnb-post-editing-v2 > cnb-post-editor > div.panel.panel--main > cnb-collapse-panel.ng-tns-c82-4.ng-star-inserted > div.panel-content.ng-tns-c82-4.ng-trigger.ng-trigger-openClosePanel > cnb-category-selector-panel > cnb-collapse-panel > div.panel-content.ng-tns-c82-6.ng-trigger.ng-trigger-openClosePanel > cnb-category-selector > div > div:nth-child(1) > label' //文章类型
     selecter = '#\\32 093554'
     await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
@@ -66,6 +68,7 @@ async function postArticles(row, page) {
     console.log('click:#publish')
     await waitForString(page, 'body > cnb-root > cnb-layout > div.main > div.content.grid-noGutter > div.right.grid-column-noGutter-noWrap > div > cnb-spinner > div > cnb-post-saved > cnb-post-saved-info > div.message-panel-header', '保存成功', 30000)
         .catch(async (error) => {
+            //console.log('div',await page.$eval('body > cnb-root > cnb-layout > div.main > div.content.grid-noGutter > div.right.grid-column-noGutter-noWrap > div', el => el.innerText))
             console.log('再次点击')
             await page.click(selecter)
             await waitForString(page, 'body > cnb-root > cnb-layout > div.main > div.content.grid-noGutter > div.right.grid-column-noGutter-noWrap > div > cnb-spinner > div > cnb-post-saved > cnb-post-saved-info > div.message-panel-header', '保存成功', 30000)
