@@ -75,8 +75,8 @@ async function main() {
     await page.setCookie(...cookies)
     console.log("写入cookies")
     await page.goto('https://weibo.com/536512331/home?topnav=1&wvr=6', { timeout: 60000 })
-    let selecter = '#pl_common_top > div > div > div.gn_position > div.gn_nav > ul > li:nth-child(5) > a > em.S_txt1'
-    await page.waitForSelector(selecter, { timeout: 3000 })
+    let selecter = '#plc_top > div > div > div.gn_position > div.gn_set.S_line1 > div:nth-child(1) > a > em.W_ficon.ficon_mail.S_ficon'
+    await page.waitForSelector(selecter, { timeout: 15000 })
     .catch(async (error)=>{
         console.log(await page.$eval('body', el => el.innerText))
 /*         selecter = 'body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)'

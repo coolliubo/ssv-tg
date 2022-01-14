@@ -37,13 +37,14 @@ async function postArticles(row, page) {
     await page.waitForSelector('#txtTitle', { timeout: 15000 })
     //await page.evaluate((selecter, text) => document.querySelector(selecter).value = text, '#txtTitle', row.title)
     await page.type('#txtTitle',row.title)
-    await sleep(200)
+    await sleep(2000)
     //await findFrames(page)
     const frame = ( await page.mainFrame().childFrames() )[0];//通过索引得到我的iframe
     let content = row.content + `<br>原文地址:<a href="${row.url_kxnn}">${row.title}</a>`
     //await page.type('#title',row.title)
     //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
     //await page.$eval('#content', el => el.value = row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
+    await frame.waitForSelector('body')
     await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, 'body > p', content)
     let selecter =''
     selecter = '#moreDiv > div:nth-child(5) > div > label.el-radio.originalRadio > span.el-radio__input > span' //文章类型
@@ -72,8 +73,8 @@ async function postArticles(row, page) {
 }
 async function main() {
     browser = await puppeteer.launch({
-        headless: runId ? true : false,
-        //headless: true,
+        //headless: runId ? true : false,
+        headless: true,
         args: ['--window-size=1920,1080'],
         defaultViewport: null,
         ignoreHTTPSErrors: true,
