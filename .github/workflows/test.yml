@@ -33,6 +33,12 @@ jobs:
               run: npm install
             - name: Run Script
               run: node test.js # > report2.txt       
-
+            - name: Commit report
+              run: | 
+                git config --global user.name 'coolliubo'
+                git config --global user.email 'coolliubo@gmail.com'
+                git add . 
+                git commit -m "Automated report $(date '+%Y/%m/%d')"
+                git push
 
               
