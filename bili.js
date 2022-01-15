@@ -8,11 +8,12 @@ const github = require('@actions/github')
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin()); */
-const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, findFrames  } = require('./common.js')
+const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, findFrames, deleteHtmlTag } = require('./common.js')
 const { changeContent, cutStrin, filterContent } = require('./utils.js')
 Date.prototype.format = tFormat
 const mysql = require('mysql2/promise')
 const runId = github.context.runId
+const ckfile = './bili.json'
 let browser
 let setup = {}
 if (!runId) {
@@ -32,40 +33,35 @@ const pool = mysql.createPool({
 });
 
 async function postArticles(row, page) {
-    await page.goto('https://mp.csdn.net/mp_blog/creation/editor', { timeout: 60000 })
-    await sleep(1000)
-    await page.waitForSelector('#txtTitle', { timeout: 15000 })
-    //await page.evaluate((selecter, text) => document.querySelector(selecter).value = text, '#txtTitle', row.title)
-    await page.type('#txtTitle',row.title)
-    await sleep(2000)
-    //await findFrames(page)
-    const frame = ( await page.mainFrame().childFrames() )[0];//通过索引得到我的iframe
-    let content = row.content + `<br>原文地址:<a href="${row.url_kxnn}">${row.title}</a>`
-    //await page.type('#title',row.title)
+    await page.goto('https://member.bilibili.com/platform/upload/text/edit')
+        let selecter = '#canvas-wrap > div > div > img'
+    await page.waitForSelector(selecter)
+    .then(async () => await page.click(selecter))
+    .catch(async (error)=>{console.log('error: ', error.message);})
+    await sleep(3000)
+    selecter = '#edit-article-box > div > iframe'
+    await page.waitForSelector(selecter)
+    const frame = ( await page.mainFrame().childFrames() )[1]  //通过索引得到我的iframe
+    selecter = '#edit-page > div.original-editor-wrap > div:nth-child(1) > div > div.ui-input-textarea.article-title > textarea'
+    await frame.evaluate((selecter, text) => document.querySelector(selecter).value = text, selecter, row.title+'破解下载')
+    await sleep(500)  
+    //console.log('frame',await frame.$eval('body', el => el.innerHTML));
+    selecter = 'body > p'
+    let content = row.content.replace(/<(?!img).*?>/g, "") //只留下img标签
+    content = content.replace(/https:\/\/www.kxnn.xyz\/vip/g,'******')+`<br>开心牛牛kxnn.xyz ${row.title}`
+    await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, selecter, content)
     //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
-    //await page.$eval('#content', el => el.value = row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
-    await frame.waitForSelector('body')
-    await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, 'body > p', content)
-    let selecter =''
-    selecter = '#moreDiv > div:nth-child(5) > div > label.el-radio.originalRadio > span.el-radio__input > span' //文章类型
-    await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
     await sleep(200)
-    //await page.click("#moreDiv > div.el-form-item.mb8.mt16.is-required.is-no-asterisk > div > div > label:nth-child(3) > span.el-radio__input")  //封面
-    selecter = '#moreDiv > div.el-form-item.mb8.mt16.is-required.is-no-asterisk > div > div > label:nth-child(3) > span.el-radio__input' //封面
-    await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
-    await sleep(200)
-    selecter = '#moreDiv > div.el-form-item.mb8.mt16.form-item-flex.is-no-asterisk > div > div > div > button' //标签
-    await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
-    await sleep(200)
-    await page.evaluate((selecter) => document.querySelector(selecter).click(), '#pane-0 > span:nth-child(2)')
-    await sleep(200)
-    await page.evaluate((selecter) => document.querySelector(selecter).click(), '#moreDiv > div.el-form-item.publish-opt-box.is-no-asterisk > div > div > div.btn-box > button.el-button.btn-outline-danger.ml16.el-button--primary.is-round')
+    return Promise.reject(new Error('临时退出'))
+    let button = '#tb_rich_poster > div.poster_body.editor_wrapper > div.poster_component.editor_bottom_panel.clearfix > div > button.btn_default.btn_middle.j_submit.poster_submit'
+    await page.evaluate((selecter) => document.querySelector(selecter).click(), button)
     console.log('click:#publish')
-    await waitForString(page, '#alertSuccess > div > div.pos-top > div.text-center.status-box > div', 'https://blog.csdn.net/eroslp/article/details', 30000)
+    selecter = '#root > div > div.ant-col.ant-col-20 > div.ant-col.ant-col-16._1Yy97 > div > div > div > div > ul > li.tGbI7.cztJE > div > a:nth-child(1)'
+    await waitForString(page, selecter, '已发布', 30000)
         .catch(async (error) => {
             console.log('再次点击')
-            await page.click('#moreDiv > div.el-form-item.publish-opt-box.is-no-asterisk > div > div > div.btn-box > button.el-button.btn-outline-danger.ml16.el-button--primary.is-round')
-            await waitForString(page, '#alertSuccess > div > div.pos-top > div.text-center.status-box > div', 'https://blog.csdn.net/eroslp/article/details', 30000)
+            await page.click(button)
+            await waitForString(page, selecter, '已发布', 30000)
         })
     await sleep(100)
     //return Promise.reject(new Error('临时退出'))
@@ -73,8 +69,8 @@ async function postArticles(row, page) {
 }
 async function main() {
     browser = await puppeteer.launch({
-        //headless: runId ? true : false,
-        headless: true,
+        headless: runId ? true : false,
+        //headless: true,
         args: ['--window-size=1920,1080'],
         defaultViewport: null,
         ignoreHTTPSErrors: true,
@@ -88,15 +84,15 @@ async function main() {
         await dialog.dismiss();
     })
     let cookies = []
-    cookies = JSON.parse(fs.readFileSync('./csdn.json', 'utf8'))
+    cookies = JSON.parse(fs.readFileSync(ckfile, 'utf8'))
     await page.setCookie(...cookies)
     console.log("写入cookies")
-    await page.goto('https://mp.csdn.net/', { timeout: 60000 })
-    let selecter = '#app > div > div > div > div.el-col.el-col-24 > section > div > div.scroll_main.el-scrollbar__wrap.el-scrollbar__wrap--hidden-default > div > section > aside > div.createBtn > a'
-    await page.waitForSelector(selecter, { timeout: 3000 })
+    await page.goto('https://account.bilibili.com/account/home')
+    let selecter = '#app > div.cc-header > div > div.right-block > div.tips-calendar_wrap'
+    await page.waitForSelector(selecter)
     .catch(async (error)=>{
         console.log(await page.$eval('body', el => el.innerText))
-        selecter = 'body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)'
+/*         selecter = 'body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)'
         await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
         await sleep(200)
         await page.type('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(1) > div > input', setup.usr.csdn)
@@ -106,19 +102,15 @@ async function main() {
             //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
             page.click('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(4) > button'),
         ])
-            .then(() => console.log('登录成功'))
+            .then(() => console.log('登录成功')) */
     })
     await sleep(1000)
     cookies = await page.cookies();
-    fs.writeFileSync('./csdn.json', JSON.stringify(cookies, null, '\t'))
-/*     
-    //await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'#user_login',setup.usr.kxnn)
-    //await page.evaluate((selecter,text) => document.querySelector(selecter).value=text,'#user_pass',setup.pwd.kxnn)
- */
+    fs.writeFileSync(ckfile, JSON.stringify(cookies, null, '\t'))
     //return Promise.reject(new Error('调试退出'))
     console.log(`*****************开始postArticles ${Date()}*******************\n`)
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
-    let sql = "SELECT * FROM articles WHERE csdn = 0 and posted = 1  order by  date asc limit 10;"
+    let sql = "SELECT * FROM articles WHERE bili = 0 and posted = 1  order by  date asc limit 1;"
     //let sql = "SELECT * FROM articles WHERE posted = 1 limit 1;"
     let r = await pool.query(sql)
     let i = 0
@@ -130,7 +122,7 @@ async function main() {
         if (row.url) await postArticles(row, page)
             .then(async row => {
                 let sql, arr
-                sql = 'UPDATE articles SET  csdn=1 WHERE id=?'
+                sql = 'UPDATE articles SET  bili=1 WHERE id=?'
                 arr = [row.id]
                 sql = await pool.format(sql, arr)
                 //console.log(row);
@@ -141,8 +133,6 @@ async function main() {
             .catch(error => console.log('error: ', error.message))
     }
     await pool.end() 
-    cookies = await page.cookies();
-    fs.writeFileSync('./csdn.json', JSON.stringify(cookies, null, '\t'))
     if (runId ? true : false) await browser.close()
     //await browser.close()
 }

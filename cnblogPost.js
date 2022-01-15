@@ -35,7 +35,7 @@ async function postArticles(row, page) {
     await page.goto('https://i.cnblogs.com/posts/edit')
     await sleep(500)
     let selecter ='#post-title'
-    await page.waitForSelector(selecter, { timeout: 15000 })
+    await page.waitForSelector(selecter)
     .then(async () =>console.log('找到#post-title') )
     //await page.evaluate((selecter, text) => document.querySelector(selecter).value = text, '#txtTitle', row.title)
     await page.type(selecter,row.title+'破解下载')
@@ -144,6 +144,8 @@ async function main() {
             .catch(error => console.log('error: ', error.message))
     }
     await pool.end()
+    cookies = await page.cookies();
+    fs.writeFileSync('./cnblog.json', JSON.stringify(cookies, null, '\t'))
     if (runId ? true : false) await browser.close()
     //await browser.close()
 }

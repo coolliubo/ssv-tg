@@ -36,7 +36,7 @@ async function postArticles(row, page) {
     await sleep(1000)
     let selecter ='#v6_pl_content_publishertop > div > div.input > textarea'
     await page.waitForSelector(selecter, { timeout: 15000 })
-    let content = row.title + '破解下载\n'+ deleteHtmlTag(row.content ) + `\n原文地址:${row.url_kxnn}`
+    let content = row.title + '破解下载\n'+ deleteHtmlTag(row.content ).replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') + `\n原文地址:${row.url_kxnn}`
     //await page.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, selecter, content)
     await page.type(selecter,content)
     //console.log('frame2',await frame.$eval('body', el => el.innerHTML));
@@ -57,7 +57,7 @@ async function postArticles(row, page) {
 async function main() {
     browser = await puppeteer.launch({
         headless: runId ? true : false,
-        //headless: true,
+        headless: true,
         args: ['--window-size=1920,1080'],
         defaultViewport: null,
         ignoreHTTPSErrors: true,
@@ -78,7 +78,8 @@ async function main() {
     let selecter = '#plc_top > div > div > div.gn_position > div.gn_set.S_line1 > div:nth-child(1) > a > em.W_ficon.ficon_mail.S_ficon'
     await page.waitForSelector(selecter, { timeout: 15000 })
     .catch(async (error)=>{
-        console.log(await page.$eval('body', el => el.innerText))
+        //console.log(await page.$eval('body', el => el.innerText))
+        console.log('login error')
 /*         selecter = 'body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)'
         await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
         await sleep(200)
@@ -92,8 +93,8 @@ async function main() {
             .then(() => console.log('登录成功')) */
     })
     await sleep(1000)
-    cookies = await page.cookies();
-    fs.writeFileSync('./weibo.json', JSON.stringify(cookies, null, '\t'))
+    //cookies = await page.cookies();
+    //fs.writeFileSync('./weibo.json', JSON.stringify(cookies, null, '\t'))
     //return Promise.reject(new Error('调试退出'))
     console.log(`*****************开始postArticles ${Date()}*******************\n`)
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
@@ -120,6 +121,8 @@ async function main() {
             .catch(error => console.log('error: ', error.message))
     }
     await pool.end()
+    cookies = await page.cookies();
+    fs.writeFileSync('./weibo.json', JSON.stringify(cookies, null, '\t'))
     if (runId ? true : false) await browser.close()
     //await browser.close()
 }
