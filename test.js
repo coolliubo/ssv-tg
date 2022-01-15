@@ -20,7 +20,7 @@ puppeteer.launch({
     //headless: true,
     args: [
         '--window-size=1920,1080',
-        setup.proxy.normal
+        //setup.proxy.normal
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,
@@ -28,7 +28,7 @@ puppeteer.launch({
 }).then(async browser => {
   console.log('Running tests..')
   const page = await browser.newPage()
-  await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd});
+  //await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd});
   await page.goto('https://bot.sannysoft.com')
   await page.waitForTimeout(5000)
   await page.screenshot({ path: 'testresult.png', fullPage: true })
