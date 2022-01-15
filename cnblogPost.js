@@ -1,13 +1,12 @@
 const fs = require("fs")
-const crypto = require('crypto');
 //const sqlite = require('./asqlite3.js')
-const puppeteer = require('puppeteer')
+//const puppeteer = require('puppeteer')
 const core = require('@actions/core')
 const github = require('@actions/github')
-/*const puppeteer = require('puppeteer-extra')
+const puppeteer = require('puppeteer-extra')
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
-puppeteer.use(StealthPlugin())*/
+puppeteer.use(StealthPlugin())
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, findFrames  } = require('./common.js')
 const { changeContent, cutStrin, filterContent } = require('./utils.js')
 Date.prototype.format = tFormat
@@ -81,14 +80,18 @@ async function postArticles(row, page) {
 async function main() {
     browser = await puppeteer.launch({
         headless: runId ? true : false,
-        headless: true,
-        args: [
-            '--window-size=1920,1080',
-            setup.proxy.normal
-        ],
-        defaultViewport: null,
-        ignoreHTTPSErrors: true,
-      })
+        //headless: true,
+    args: [
+      '--window-size=1920,1080',
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-blink-features=AutomationControlled',
+      setup.proxy.normal
+      //setup.proxyL
+    ],
+    defaultViewport: null,
+    ignoreHTTPSErrors: true
+  })
     //console.log(await sqlite.open('./freeok.db'))
     const page = await browser.newPage()
     //await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36')
