@@ -1,12 +1,12 @@
 const fs = require("fs")
 //const sqlite = require('./asqlite3.js')
-const puppeteer = require('puppeteer')
+//const puppeteer = require('puppeteer')
 const core = require('@actions/core')
 const github = require('@actions/github')
-/*const puppeteer = require('puppeteer-extra')
+const puppeteer = require('puppeteer-extra')
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
-puppeteer.use(StealthPlugin())*/
+puppeteer.use(StealthPlugin())
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, findFrames  } = require('./common.js')
 const { changeContent, cutStrin, filterContent } = require('./utils.js')
 Date.prototype.format = tFormat
@@ -96,8 +96,22 @@ async function main() {
         //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
     })
-    let cookies = []
-    cookies = JSON.parse(fs.readFileSync('./cnblog.json', 'utf8'))
+        // WebGL设置
+await page.evaluateOnNewDocument(() => {
+    const getParameter = WebGLRenderingContext.getParameter;
+    WebGLRenderingContext.prototype.getParameter = function (parameter) {
+        // UNMASKED_VENDOR_WEBGL
+        if (parameter === 37445) {
+            return 'Intel Inc.'
+        }
+        // UNMASKED_RENDERER_WEBGL
+        if (parameter === 37446) {
+            return 'Intel(R) Iris(TM) Graphics 6100'
+        }
+        return getParameter(parameter)
+    }
+})
+    let cookies = JSON.parse(fs.readFileSync('./cnblog.json', 'utf8'))
     await page.setCookie(...cookies)
     console.log("写入cookies")
     await page.goto('https://www.cnblogs.com/eroslp/')
