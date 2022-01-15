@@ -38,7 +38,7 @@ async function postArticles(row, page) {
     .then(async () =>console.log('找到#post-title') )
     //await page.evaluate((selecter, text) => document.querySelector(selecter).value = text, '#txtTitle', row.title)
     await page.type(selecter,row.title+'破解下载')
-    await sleep(3000)
+    await sleep(5000)
     //await findFrames(page)
     const frame = ( await page.mainFrame().childFrames() )[0]  //通过索引得到我的iframe
     //console.log('frame',await frame.$eval('body', el => el.innerHTML));
