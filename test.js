@@ -29,6 +29,8 @@ puppeteer.launch({
   console.log('Running tests..')
   const page = await browser.newPage()
   await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd});
+  let cookies = JSON.parse(fs.readFileSync('./cnblog.json', 'utf8'))
+  await page.setCookie(...cookies)
   await page.goto('https://www.cnblogs.com/eroslp/')
   await page.waitForTimeout(5000)
   await page.screenshot({ path: 'testresult.png', fullPage: true })
