@@ -13,7 +13,6 @@ const { changeContent, cutStrin, filterContent } = require('./utils.js')
 Date.prototype.format = tFormat
 const mysql = require('mysql2/promise')
 const runId = github.context.runId
-let browser
 let setup = {}
 if (!runId) {
     setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'))
@@ -73,9 +72,9 @@ async function postArticles(row, page) {
     return row
 }
 async function main() {
-    browser = await puppeteer.launch({
-        //headless: runId ? true : false,
-        headless: true,
+    const browser = await puppeteer.launch({
+        headless: runId ? true : false,
+        //headless: true,
         args: ['--window-size=1920,1080'],
         defaultViewport: null,
         ignoreHTTPSErrors: true,
@@ -88,8 +87,7 @@ async function main() {
         //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
     })
-    let cookies = []
-    cookies = JSON.parse(fs.readFileSync('./csdn.json', 'utf8'))
+    let cookies = cookies = JSON.parse(fs.readFileSync('./csdn.json', 'utf8'))
     await page.setCookie(...cookies)
     console.log("写入cookies")
     await page.goto('https://mp.csdn.net/', { timeout: 60000 })

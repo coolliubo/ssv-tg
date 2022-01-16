@@ -62,10 +62,12 @@ async function main() {
     .then(async () =>console.log('找到#post-title') )
     //await page.evaluate((selecter, text) => document.querySelector(selecter).value = text, '#txtTitle', row.title)
     await page.type(selecter,'破解下载')
-  
+    let content = 'row.content.replace(/https:\/\/www.kxnn.xyz\/vip/g,"******")' 
+    const frame = ( await page.mainFrame().childFrames() )[0]  //通过索引得到我的iframe
+    await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, '#tinymce', content)
     await page.waitForTimeout(3000)
     await page.screenshot({ path: 'testresult.png', fullPage: true })
-    await browser.close()
+    if (runId ? true : false) await browser.close()
     console.log(`All done, check the screenshot. ✨`)
 
 }
