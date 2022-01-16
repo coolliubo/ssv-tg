@@ -47,8 +47,8 @@ async function main() {
     await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd})
     let cookies = JSON.parse(fs.readFileSync(ckfile, 'utf8'))
     await page.setCookie(...cookies)
-    await page.goto('https://www.kxnn.xyz')
-    await page.waitForTimeout(500)
+    await page.goto('https://www.youtube.com/watch?v=Yo_VyP7qlC8&ab_channel=KKBOX%E8%8F%AF%E8%AA%9E%E6%96%B0%E6%AD%8C-kkboxmusic')
+    await page.waitForTimeout(3000)
     let selecter = '#Header1_HeaderTitle'
     await page.waitForSelector(selecter, { timeout: 5000 })
     .catch(async (error)=>{
