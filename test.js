@@ -47,7 +47,7 @@ async function main() {
     await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd})
     let cookies = JSON.parse(fs.readFileSync(ckfile, 'utf8'))
     await page.setCookie(...cookies)
-    await page.goto('https://www.cnblogs.com/eroslp/')
+    await page.goto('https://www.kxnn.xyz')
     await page.waitForTimeout(500)
     let selecter = '#Header1_HeaderTitle'
     await page.waitForSelector(selecter, { timeout: 5000 })
