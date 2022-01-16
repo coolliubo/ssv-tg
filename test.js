@@ -36,7 +36,7 @@ async function main() {
         //headless: true,
         args: [
             '--window-size=1920,1080',
-            '--proxy-server=app.aiboboxx.ml:7890'
+            '--proxy-server=socks5://app.aiboboxx.ml:7799'
         ],
         defaultViewport: null,
         ignoreHTTPSErrors: true,
@@ -45,7 +45,7 @@ async function main() {
     console.log('Running tests..')
     const page = await browser.newPage()
     console.log(setup.proxy.usr)
-    await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd})
+    //await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd})
     let cookies = JSON.parse(fs.readFileSync(ckfile, 'utf8'))
     await page.setCookie(...cookies)
     await page.goto('https://www.youtube.com/watch?v=Yo_VyP7qlC8&ab_channel=KKBOX%E8%8F%AF%E8%AA%9E%E6%96%B0%E6%AD%8C-kkboxmusic')
