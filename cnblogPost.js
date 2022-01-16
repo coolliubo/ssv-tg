@@ -74,6 +74,8 @@ async function main() {
         //headless: true,
         args: [
             '--window-size=1920,1080',
+            '--ignore-certificate-errors',
+            '--ignore-certificate-errors-spki-list ',
             setup.proxy.normal
         ],
         defaultViewport: null,
