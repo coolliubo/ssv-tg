@@ -36,7 +36,9 @@ async function main() {
         //headless: true,
         args: [
             '--window-size=1920,1080',
-            '--proxy-server=socks5://app.aiboboxx.ml:7799'
+            '--proxy-server=socks5://app.aiboboxx.ml:7799',
+            '--ignore-certificate-errors',
+            '--ignore-certificate-errors-spki-list '
         ],
         defaultViewport: null,
         ignoreHTTPSErrors: true,
