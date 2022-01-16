@@ -1,4 +1,5 @@
 const fs = require("fs")
+const { cutString } = require('./common.js')
 exports.filterContent = function filterContent(content) {
     let cut = cutString(content,'<script src="/wp-content/themes/modown/module/ckplayer','<img src="undefined"></div></div></div>')
     let video = ''
@@ -106,15 +107,7 @@ exports.changeContent = function changeContent(content) {
         video
     }
 }
-exports.cutString = function cutString(origin, preStr, aftStr, includeBorders = true) {
-    let pos = origin.indexOf(preStr)
-    let pos2 = origin.indexOf(aftStr, pos+preStr.length)
-    //console.log(pos,pos2,origin.length)
-    if (pos == -1 || pos2 == -1) return ''
-    if (includeBorders) return origin.slice(pos, pos2 + aftStr.length)
-    return origin.slice(pos + preStr.length, pos2)
-    //return origin.substring(pos,pos2+aftStr.length)
-}
+
 /*  let content = fs.readFileSync('./title.html', 'utf8')
 //let result = exports.cutString(content,'<script src="/wp-content/themes/modown/module/ckplayer','<img src="undefined"></div></div></div>');
 let cut = exports.cutString(content,'<script src="/wp-content/themes/modown/module/ckplayer','<img src="undefined"></div></div></div>')

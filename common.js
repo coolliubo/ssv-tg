@@ -109,3 +109,12 @@ exports.deleteHtmlTag = function deleteHtmlTag(str){
   str = str.replace(/<[^>]+>|&[^>]+;/g,"").trim();//去掉所有的html标签和&nbsp;之类的特殊符合
   return str;
  }
+exports.cutString = function cutString(origin, preStr, aftStr, includeBorders = true) {
+  let pos = origin.indexOf(preStr)
+  let pos2 = origin.indexOf(aftStr, pos+preStr.length)
+  //console.log(pos,pos2,origin.length)
+  if (pos == -1 || pos2 == -1) return ''
+  if (includeBorders) return origin.slice(pos, pos2 + aftStr.length)
+  return origin.slice(pos + preStr.length, pos2)
+  //return origin.substring(pos,pos2+aftStr.length)
+}

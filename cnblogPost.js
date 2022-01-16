@@ -7,11 +7,12 @@ const puppeteer = require('puppeteer-extra')
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
-const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, findFrames  } = require('./common.js')
-const { changeContent, cutStrin, filterContent } = require('./utils.js')
+const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, findFrames,cutString  } = require('./common.js')
+const { changeContent, filterContent } = require('./utils.js')
 Date.prototype.format = tFormat
 const mysql = require('mysql2/promise')
 const runId = github.context.runId
+const ckfile = './cnblog.json'
 let setup = {}
 if (!runId) {
     setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'))
@@ -41,10 +42,10 @@ async function postArticles(row, page) {
     //await findFrames(page)
     const frame = ( await page.mainFrame().childFrames() )[0]  //通过索引得到我的iframe
     //console.log('frame',await frame.$eval('body', el => el.innerHTML));
-    let content = row.content + `<br>原文地址:<a href="${row.url_kxnn}">${row.title}</a>`
+    let content = row.content.replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') 
+    content = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '') + `<br>原文地址:<a href="${row.url_kxnn}">${row.title}</a>`
     //await page.type('#title',row.title)
     //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
-    //await page.$eval('#content', el => el.value = row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
     //await frame.waitForSelector('#tinymce')
     await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, '#tinymce', content)
     //console.log('frame2',await frame.$eval('body', el => el.innerHTML));
@@ -52,15 +53,6 @@ async function postArticles(row, page) {
     selecter = '#\\32 093554'
     await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
     await sleep(200)
-    //await page.click("#moreDiv > div.el-form-item.mb8.mt16.is-required.is-no-asterisk > div > div > label:nth-child(3) > span.el-radio__input")  //封面
-/*     selecter = '#moreDiv > div.el-form-item.mb8.mt16.is-required.is-no-asterisk > div > div > label:nth-child(3) > span.el-radio__input' //封面
-    await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter) */
-    // await sleep(200)
-    // selecter = '#moreDiv > div.el-form-item.mb8.mt16.form-item-flex.is-no-asterisk > div > div > div > button' //标签
-    // await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
-    // await sleep(200)
-    // await page.evaluate((selecter) => document.querySelector(selecter).click(), '#pane-0 > span:nth-child(2)')
-    // await sleep(200)
     //return Promise.reject(new Error('临时退出'))
     selecter = 'body > cnb-root > cnb-layout > div.main > div.content.grid-noGutter > div.right.grid-column-noGutter-noWrap > div > cnb-spinner > div > cnb-post-editing-v2 > cnb-post-editor > div.panel--bottom > cnb-spinner > div > cnb-submit-buttons > button:nth-child(1)'
     await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
@@ -110,7 +102,7 @@ await page.evaluateOnNewDocument(() => {
         return getParameter(parameter)
     }
 })
-    let cookies = JSON.parse(fs.readFileSync('./cnblog.json', 'utf8'))
+    let cookies = JSON.parse(fs.readFileSync(ckfile, 'utf8'))
     await page.setCookie(...cookies)
     console.log("写入cookies")
     await page.goto('https://www.cnblogs.com/eroslp/')
@@ -132,7 +124,7 @@ await page.evaluateOnNewDocument(() => {
     })
     await sleep(1000)
     cookies = await page.cookies();
-    fs.writeFileSync('./cnblog.json', JSON.stringify(cookies, null, '\t'))
+    fs.writeFileSync(ckfile, JSON.stringify(cookies, null, '\t'))
     //return Promise.reject(new Error('调试退出'))
     console.log(`*****************开始postArticles ${Date()}*******************\n`)
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
@@ -160,7 +152,7 @@ await page.evaluateOnNewDocument(() => {
     }
     await pool.end()
     cookies = await page.cookies();
-    fs.writeFileSync('./cnblog.json', JSON.stringify(cookies, null, '\t'))
+    fs.writeFileSync(ckfile, JSON.stringify(cookies, null, '\t'))
     if (runId ? true : false) await browser.close()
     //await browser.close()
 }
