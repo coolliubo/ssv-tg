@@ -44,6 +44,7 @@ async function postArticles(row, page) {
     //console.log('frame',await frame.$eval('body', el => el.innerHTML));
     let content = row.content.replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') 
     content = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '') + `<br>原文地址:<a href="${row.url_kxnn}">${row.title}</a>`
+    content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')
     //await page.type('#title',row.title)
     //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
     //await frame.waitForSelector('#tinymce')
@@ -89,21 +90,7 @@ async function main() {
         //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
     })
-        // WebGL设置
-await page.evaluateOnNewDocument(() => {
-    const getParameter = WebGLRenderingContext.getParameter;
-    WebGLRenderingContext.prototype.getParameter = function (parameter) {
-        // UNMASKED_VENDOR_WEBGL
-        if (parameter === 37445) {
-            return 'Intel Inc.'
-        }
-        // UNMASKED_RENDERER_WEBGL
-        if (parameter === 37446) {
-            return 'Intel(R) Iris(TM) Graphics 6100'
-        }
-        return getParameter(parameter)
-    }
-})
+
     let cookies = JSON.parse(fs.readFileSync(ckfile, 'utf8'))
     await page.setCookie(...cookies)
     console.log("写入cookies")
