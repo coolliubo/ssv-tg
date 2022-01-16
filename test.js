@@ -32,7 +32,7 @@ puppeteer.launch({
   let cookies = JSON.parse(fs.readFileSync('./cnblog.json', 'utf8'))
   await page.setCookie(...cookies)
   console.log("写入cookies")
-  await page.goto('https://www.cnblogs.com/eroslp/')
+  await page.goto('https://www.youtube.com/')
   await page.waitForTimeout(5000)
   await page.screenshot({ path: 'testresult.png', fullPage: true })
   await browser.close()
