@@ -35,7 +35,12 @@ async function postArticles(row, page) {
     await sleep(1000)
     await page.waitForSelector('#txtTitle', { timeout: 15000 })
     //await page.evaluate((selecter, text) => document.querySelector(selecter).value = text, '#txtTitle', row.title)
-    await page.type('#txtTitle',row.title)
+    if (row.title.length > 5){
+        await page.type('#txtTitle',row.title)
+    } else {
+        await page.type('#txtTitle',row.title+'steam游戏下载')
+    }
+    
     await sleep(2000)
     //await findFrames(page)
     const frame = ( await page.mainFrame().childFrames() )[0];//通过索引得到我的iframe

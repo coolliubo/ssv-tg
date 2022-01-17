@@ -37,30 +37,52 @@ async function postArticles(row, page) {
     await page.waitForSelector(selecter)
     .then(async () => await page.click(selecter))
     .catch(async (error)=>{console.log('error: ', error.message);})
-    await sleep(3000)
+    await sleep(5000)
     selecter = '#edit-article-box > div > iframe'
     await page.waitForSelector(selecter)
     const frame = ( await page.mainFrame().childFrames() )[1]  //通过索引得到我的iframe
     selecter = '#edit-page > div.original-editor-wrap > div:nth-child(1) > div > div.ui-input-textarea.article-title > textarea'
-    await frame.evaluate((selecter, text) => document.querySelector(selecter).value = text, selecter, row.title+'破解下载')
+    await frame.type(selecter,row.title)
+    //await frame.evaluate((selecter, text) => document.querySelector(selecter).value = text, selecter, row.title+'破解下载')
     await sleep(500)  
     //console.log('frame',await frame.$eval('body', el => el.innerHTML));
-    selecter = 'body > p'
-    let content = row.content.replace(/<(?!img).*?>/g, "") //只留下img标签
-    content = content.replace(/https:\/\/www.kxnn.xyz\/vip/g,'******')+`<br>开心牛牛kxnn.xyz ${row.title}`
-    await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, selecter, content)
+    let content = row.content.replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') 
+    content = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '').replace(/下载/g, '**')
+    content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz') + `<br>详细内容:搜索 开心牛牛 ${row.title}`
+    await frame.waitForSelector('#ueditor_0', { timeout: 5000 })
+    const elementHandle = await frame.$('#ueditor_0')
+    elementHandle.focus()
+    const iframe = await elementHandle.contentFrame()
+    //console.log('iframe',iframe.content())
+    selecter = 'body'
+    //await iframe.focus(selecter)
+    await sleep(500) 
+    await page.keyboard.type('puppeteer', { delay: 100 })
+    await page.keyboard.press('Enter');
+    await iframe.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, selecter, content)
     //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
     await sleep(200)
-    return Promise.reject(new Error('临时退出'))
-    let button = '#tb_rich_poster > div.poster_body.editor_wrapper > div.poster_component.editor_bottom_panel.clearfix > div > button.btn_default.btn_middle.j_submit.poster_submit'
-    await page.evaluate((selecter) => document.querySelector(selecter).click(), button)
+    //return Promise.reject(new Error('临时退出'))
+    selecter = '#edit-page > div > div:nth-child(3) > div.classify > ul > li:nth-child(2) > a'
+    await frame.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
+    await sleep(500)
+    selecter = '#edit-page > div > div:nth-child(3) > div.classify > ul > li:nth-child(2) > ul > li:nth-child(1) > span'
+    await frame.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
+    await sleep(500)
+    let button = '#edit-page > div > div.btn-group.main-active-btn > button.ui-btn.blue-radius'
+    await frame.evaluate((selecter) => document.querySelector(selecter).click(), button)
     console.log('click:#publish')
-    selecter = '#root > div > div.ant-col.ant-col-20 > div.ant-col.ant-col-16._1Yy97 > div > div > div > div > ul > li.tGbI7.cztJE > div > a:nth-child(1)'
-    await waitForString(page, selecter, '已发布', 30000)
+    selecter = '#edit-page > div > div.success-mask > div > div.title'
+    //await waitForString(frame, selecter, '你的专栏已提交成功', 30000)
+    await frame.waitForSelector(selecter,{ visible: true, timeout: 15000 })
         .catch(async (error) => {
-            console.log('再次点击')
-            await page.click(button)
-            await waitForString(page, selecter, '已发布', 30000)
+            await frame.waitForSelector(button, { timeout: 5000 })
+            .then(async () => {
+                console.log('再次点击')
+                await frame.click(button)
+                await frame.waitForSelector(selecter,{ visible: true, timeout: 15000 })
+                //await waitForString(frame, selecter, '你的专栏已提交成功', 30000)
+            })
         })
     await sleep(100)
     //return Promise.reject(new Error('临时退出'))
@@ -73,6 +95,7 @@ async function main() {
         args: ['--window-size=1920,1080'],
         defaultViewport: null,
         ignoreHTTPSErrors: true,
+        ignoreDefaultArgs:['--enable-automation'] //去除提示
       })
     //console.log(await sqlite.open('./freeok.db'))
     const page = await browser.newPage()
@@ -82,26 +105,15 @@ async function main() {
         //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
     })
-    let cookies = []
-    cookies = JSON.parse(fs.readFileSync(ckfile, 'utf8'))
+    let cookies = JSON.parse(fs.readFileSync(ckfile, 'utf8'))
     await page.setCookie(...cookies)
     console.log("写入cookies")
     await page.goto('https://account.bilibili.com/account/home')
-    let selecter = '#app > div.cc-header > div > div.right-block > div.tips-calendar_wrap'
-    await page.waitForSelector(selecter)
+    let selecter = '#app > div > div.security_content > div.security-right > div > div:nth-child(2) > div.home-daily-task-warp > span.home-dialy-task-title'
+    await page.waitForSelector(selecter, { timeout: 5000 })
     .catch(async (error)=>{
-        console.log(await page.$eval('body', el => el.innerText))
-/*         selecter = 'body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)'
-        await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
-        await sleep(200)
-        await page.type('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(1) > div > input', setup.usr.csdn)
-        await page.type('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(2) > div > input', setup.pwd.csdn)
-        await Promise.all([
-            page.waitForNavigation({ timeout: 60000 }),
-            //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
-            page.click('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(4) > button'),
-        ])
-            .then(() => console.log('登录成功')) */
+        //console.log(await page.$eval('body', el => el.innerText))
+        console.log('未登录')
     })
     await sleep(1000)
     cookies = await page.cookies();
@@ -109,7 +121,7 @@ async function main() {
     //return Promise.reject(new Error('调试退出'))
     console.log(`*****************开始postArticles ${Date()}*******************\n`)
     //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < datetime('now') or level_end_time IS NULL);"
-    let sql = "SELECT * FROM articles WHERE bili = 0 and posted = 1  order by  date asc limit 1;"
+    let sql = "SELECT * FROM articles WHERE bili = 0 and posted = 1  order by  date asc limit 3;"
     //let sql = "SELECT * FROM articles WHERE posted = 1 limit 1;"
     let r = await pool.query(sql)
     let i = 0

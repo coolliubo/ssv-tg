@@ -8,7 +8,7 @@ const github = require('@actions/github')
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin()); */
-const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, findFrames  } = require('./common.js')
+const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, deleteHtmlTag   } = require('./common.js')
 const { changeContent, cutStrin, filterContent } = require('./utils.js')
 Date.prototype.format = tFormat
 const mysql = require('mysql2/promise')
@@ -34,35 +34,41 @@ const pool = mysql.createPool({
 
 async function postArticles(row, page) {
     await page.goto('https://www.jianshu.com/writer#/notebooks/51953858/notes/97319040')
-    await sleep(500)
+    await sleep(1500)
     let selecter = '#root > div > div.ant-col.ant-col-20 > div.ant-col.ant-col-8.rQQG7 > div > div > div > div._1GsW5 > span'
     await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
-    await sleep(1500)
+    await sleep(2000)
     selecter ='#root > div > div.ant-col.ant-col-20 > div.ant-col.ant-col-16._1Yy97 > div > div > div > div > input'
     await page.waitForSelector(selecter)
     //await page.evaluate((selecter, text) => document.querySelector(selecter).value = text, '#txtTitle', row.title)
     await page.type(selecter,row.title +'破解下载')
-    await sleep(500)
+    await sleep(1500)
     //await findFrames(page)
-    selecter = '#editor > div > p'
-    let content = row.content + `<br>原文地址:<a href="${row.url_kxnn}">${row.title}</a>`
-    content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')
-    //await page.type(selecter, content)
-    //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
-    //await page.$eval('#content', el => el.value = row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
-    await page.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, selecter, content)
+    
+    let content = row.content.replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') 
+    content = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '').replace(/下载/g, '**') 
+    content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz') + `<br>详细内容:搜索 开心牛牛 ${row.title}`
+    selecter = '#editor > div'
+    await page.focus(selecter)
+    await page.keyboard.type('puppeteer', { delay: 100 })
+    await page.keyboard.press('Enter');
     await sleep(200)
+    //await page.type(selecter, content)
+     //await page.$eval('#content', el => el.value = row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')
+     await page.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, selecter, content)
+    await sleep(1000)
     let button = '#root > div > div.ant-col.ant-col-20 > div.ant-col.ant-col-16._1Yy97 > div > div > div > div > ul > li.tGbI7.cztJE > a'
     await page.evaluate((selecter) => document.querySelector(selecter).click(), button)
     console.log('click:#publish')
     selecter = '#root > div > div.ant-col.ant-col-20 > div.ant-col.ant-col-16._1Yy97 > div > div > div > div > ul > li.tGbI7.cztJE > div > a:nth-child(1)'
-    await waitForString(page, selecter, '已发布', 30000)
+    await waitForString(page, selecter, '已发布', 20000)
         .catch(async (error) => {
             console.log('再次点击')
             await page.click(button)
-            await waitForString(page, selecter, '已发布', 30000)
+            await waitForString(page, selecter, '已发布', 20000)
         })
-    await sleep(100)
+    await sleep(500)
+    await page.goto('https://www.jianshu.com/')
     //return Promise.reject(new Error('临时退出'))
     return row
 }
@@ -88,9 +94,27 @@ async function main() {
     console.log("写入cookies")
     await page.goto('https://www.jianshu.com/u/1b528be55421')
     let selecter = 'body > nav > div > div.user'
-    await page.waitForSelector(selecter)
+    await page.waitForSelector(selecter,{ timeout: 5000 })
     .catch(async (error)=>{
-        console.log(await page.$eval('body', el => el.innerText))
+        //console.log(await page.$eval('body', el => el.innerText))
+        console.log('未登录')
+        let selecter = '#sign_in'
+        await page.click(selecter)
+        await page.waitForTimeout(2000)
+        selecter ='#session_email_or_mobile_number'
+        await page.type(selecter,setup.usr.jianshu)
+        await page.waitForTimeout(200)
+        selecter ='#session_password'
+        await page.type(selecter,setup.pwd.jianshu)
+        await page.waitForTimeout(200)
+        selecter ='#sign-in-form-submit-btn'
+        await Promise.all([
+            page.waitForNavigation({ timeout: 15000 }),
+            //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
+            page.click(selecter),
+        ])
+        .then(() => console.log('登录成功'))
+
 /*         selecter = 'body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)'
         await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
         await sleep(200)
@@ -132,6 +156,8 @@ async function main() {
             .catch(error => console.log('error: ', error.message))
     }
     await pool.end() 
+    cookies = await page.cookies();
+    fs.writeFileSync(ckfile, JSON.stringify(cookies, null, '\t'))
     if (runId ? true : false) await browser.close()
     //await browser.close()
 }
