@@ -44,7 +44,7 @@ async function postArticles(row, page) {
     //console.log('frame',await frame.$eval('body', el => el.innerHTML));
     let content = row.content.replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') 
     content = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '') 
-    content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')+ `<br>原文地址:<a href="${row.url_kxnn}">${row.title}</a>`
+    content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')+`<br>原文地址:<a href="${row.url_kxnn}">${row.url_kxnn}</a>`
     //await page.type('#title',row.title)
     //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
     //await frame.waitForSelector('#tinymce')

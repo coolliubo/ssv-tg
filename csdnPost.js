@@ -45,8 +45,8 @@ async function postArticles(row, page) {
     //await findFrames(page)
     const frame = ( await page.mainFrame().childFrames() )[0];//通过索引得到我的iframe
     let content = row.content.replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') 
-    content = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '') + `<br>原文地址:<a href="${row.url_kxnn}">${row.title}</a>`
-    content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')
+    content = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '') 
+    content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')+`<br>原文地址:<a href="${row.url_kxnn}">${row.url_kxnn}</a>`
     //await page.type('#title',row.title)
     //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
     //await page.$eval('#content', el => el.value = row.content+'<p>[rihide]</p>'+row.vip+'<p>[/rihide]</p>')

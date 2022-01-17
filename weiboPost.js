@@ -35,8 +35,9 @@ async function postArticles(row, page) {
     await sleep(1000)
     let selecter ='#v6_pl_content_publishertop > div > div.input > textarea'
     await page.waitForSelector(selecter, { timeout: 15000 })
-    let content = row.title + '破解下载\n'+ deleteHtmlTag(row.content ).replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') + `\n原文地址:${row.url_kxnn}`
+    let content = deleteHtmlTag(row.content ).replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') 
     content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')
+    content =  row.title + '破解下载\n'+ content+ `\n原文地址:${row.url_kxnn}`
     //await page.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, selecter, content)
     await page.type(selecter,content)
     //console.log('frame2',await frame.$eval('body', el => el.innerHTML));
