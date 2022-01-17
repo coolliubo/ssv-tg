@@ -83,13 +83,13 @@ async function main() {
         headless: true,
         args: [
             '--window-size=1920,1080',
-            //'--ignore-certificate-errors',
-            //'--ignore-certificate-errors-spki-list ',
+            '--ignore-certificate-errors',
+            '--ignore-certificate-errors-spki-list ',
             //'--enable-blink-features=HTMLImports',
-            setup.proxy.normal
+            //setup.proxy.normal
         ],
         defaultViewport: null,
-        //ignoreHTTPSErrors: true,
+        ignoreHTTPSErrors: true,
       })
     //console.log(await sqlite.open('./freeok.db'))
     const page = await browser.newPage()
