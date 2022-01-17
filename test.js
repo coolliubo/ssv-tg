@@ -1,12 +1,12 @@
 const fs = require("fs")
 //const sqlite = require('./asqlite3.js')
-//const puppeteer = require('puppeteer')
+const puppeteer = require('puppeteer')
 const core = require('@actions/core')
 const github = require('@actions/github')
-const puppeteer = require('puppeteer-extra')
+/* const puppeteer = require('puppeteer-extra')
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
-puppeteer.use(StealthPlugin())
+puppeteer.use(StealthPlugin()) */
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, findFrames  } = require('./common.js')
 const { changeContent, cutStrin, filterContent } = require('./utils.js')
 Date.prototype.format = tFormat
@@ -33,7 +33,7 @@ const pool = mysql.createPool({
 async function main() {
     const browser = await puppeteer.launch({ 
         headless: runId ? true : false,
-        headless: true,
+        //headless: true,
         args: [
             '--window-size=1920,1080',
             '--proxy-server=socks5://app.aiboboxx.ml:7799',
@@ -48,6 +48,7 @@ async function main() {
     const page = await browser.newPage()
     console.log(setup.proxy.usr)
     //await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd})
+    //await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36')
     let cookies = JSON.parse(fs.readFileSync(ckfile, 'utf8'))
     await page.setCookie(...cookies)
     await page.goto('https://www.youtube.com/watch?v=Yo_VyP7qlC8&ab_channel=KKBOX%E8%8F%AF%E8%AA%9E%E6%96%B0%E6%AD%8C-kkboxmusic')
