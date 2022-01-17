@@ -77,9 +77,8 @@ async function main() {
             '--window-size=1920,1080',
             '--ignore-certificate-errors',
             '--ignore-certificate-errors-spki-list ',
-            "--proxy-server=app.aiboboxx.ml:7799",
+            "--proxy-server=socks5://app.aiboboxx.ml:7799",
             //'--enable-blink-features=ShadowDOMV0,CustomElementsV0,HTMLImports',
-
             //setup.proxy.normal
         ],
         defaultViewport: null,
