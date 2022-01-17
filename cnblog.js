@@ -78,7 +78,7 @@ async function main() {
             //'--ignore-certificate-errors',
             //'--ignore-certificate-errors-spki-list ',
             //'--enable-blink-features=ShadowDOMV0,CustomElementsV0,HTMLImports',
-            setup.proxy.normal
+            //setup.proxy.normal
         ],
         defaultViewport: null,
         //ignoreHTTPSErrors: true,
