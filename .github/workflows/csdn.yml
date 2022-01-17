@@ -1,10 +1,10 @@
-name: cnblogPost
+name: csdn
 
 on:
   repository_dispatch:
   workflow_dispatch:
   schedule:
-    - cron: '15 1 * * *'
+    - cron: '15 0 * * *'
   watch:
     types: started
     
@@ -32,13 +32,13 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node cnblogPost.js # > report2.txt       
+              run: node csdn.js # > report2.txt       
             - name: Commit report
-              run: | 
+              run: |
+                echo  "csdn运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
                 git config --global user.name 'coolliubo'
                 git config --global user.email 'coolliubo@gmail.com'
                 git pull origin main
                 git commit -am "Automated report $(date '+%Y/%m/%d')"
                 git push
-
               

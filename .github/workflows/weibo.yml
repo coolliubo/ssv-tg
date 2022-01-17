@@ -1,10 +1,10 @@
-name: csdnPost
+name: weibo
 
 on:
   repository_dispatch:
   workflow_dispatch:
   schedule:
-    - cron: '15 0 * * *'
+    - cron: '35 */8 * * *'
   watch:
     types: started
     
@@ -21,7 +21,7 @@ jobs:
             - name: Use Node.js
               uses: actions/setup-node@v1
               with:
-                node-version: '12.x'
+                node-version: '16.x'
             - name: Cache node_modules
               uses: actions/cache@v2 # 使用 GitHub 官方的缓存 Action。
               env:
@@ -32,10 +32,9 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node csdnPost.js # > report2.txt       
+              run: node weibo.js # > report2.txt       
             - name: Commit report
-              run: |
-                echo  "csdnPost运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
+              run: | 
                 git config --global user.name 'coolliubo'
                 git config --global user.email 'coolliubo@gmail.com'
                 git pull origin main
