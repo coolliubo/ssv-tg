@@ -38,6 +38,7 @@ jobs:
                 echo  "csdnPost运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
                 git config --global user.name 'coolliubo'
                 git config --global user.email 'coolliubo@gmail.com'
+                git pull origin main
                 git commit -am "Automated report $(date '+%Y/%m/%d')"
                 git push
               
