@@ -40,7 +40,7 @@ async function main() {
         //headless: true,
         args: [
             '--window-size=1920,1080',
-            '--proxy-server=socks5://39.165.98.152:7302',
+            '--proxy-server=http://14.143.168.230:8080',
             //`--proxy-server=${newProxyUrl}`,
             '--ignore-certificate-errors',
             '--ignore-certificate-errors-spki-list '
@@ -59,7 +59,7 @@ async function main() {
     await page.setCookie(...cookies)
     //await page.goto('https://www.youtube.com/watch?v=Yo_VyP7qlC8&ab_channel=KKBOX%E8%8F%AF%E8%AA%9E%E6%96%B0%E6%AD%8C-kkboxmusic')
     await page.goto('https://en.ipip.net/')
-    await page.waitForTimeout(3000)
+    await page.waitForTimeout(5000)
     let selecter = '#Header1_HeaderTitle'
     await page.waitForSelector(selecter, { timeout: 5000 })
     .catch(async (error)=>{
@@ -75,6 +75,7 @@ async function main() {
     await page.type(selecter,'破解下载')
     let content = 'row.content.replace(/https:\/\/www.kxnn.xyz\/vip/g,"******")' 
     const frame = ( await page.mainFrame().childFrames() )[0]  //通过索引得到我的iframe
+    await frame.waitForSelector('#tinymce')
     await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, '#tinymce', content)
     await page.waitForTimeout(3000)
     await page.screenshot({ path: 'testresult.png', fullPage: true })
