@@ -47,6 +47,7 @@ async function main() {
         ],
         defaultViewport: null,
         ignoreHTTPSErrors: true,
+        timeout: 90000
         
     })
     console.log('Running tests..')
