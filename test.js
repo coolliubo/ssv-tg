@@ -3,7 +3,8 @@ const fs = require("fs")
 const puppeteer = require('puppeteer')
 const core = require('@actions/core')
 const github = require('@actions/github')
-const useProxy = require('puppeteer-page-proxy');
+const proxyChain = require('proxy-chain')
+// change username & password
 /* const puppeteer = require('puppeteer-extra')
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
@@ -32,12 +33,15 @@ const pool = mysql.createPool({
 })
 
 async function main() {
+    const oldProxyUrl = 'http://app.aiboboxx.ml:7799'
+    const newProxyUrl = await proxyChain.anonymizeProxy(oldProxyUrl)
     const browser = await puppeteer.launch({ 
         headless: runId ? true : false,
         //headless: true,
         args: [
             '--window-size=1920,1080',
             //'--proxy-server=socks5://app.aiboboxx.ml:7799',
+            `--proxy-server=${newProxyUrl}`,
             '--ignore-certificate-errors',
             '--ignore-certificate-errors-spki-list '
         ],
@@ -47,8 +51,7 @@ async function main() {
     })
     console.log('Running tests..')
     const page = await browser.newPage()
-    await useProxy(page, 'http://app.aiboboxx.ml:7799');
-    //console.log(setup.proxy.usr)
+    //await useProxy(page, 'http://app.aiboboxx.ml:7799');
     //await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd})
     //await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36')
     let cookies = JSON.parse(fs.readFileSync(ckfile, 'utf8'))
