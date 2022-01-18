@@ -3,7 +3,6 @@ const fs = require("fs")
 const puppeteer = require('puppeteer')
 const core = require('@actions/core')
 const github = require('@actions/github')
-//const proxyChain = require('proxy-chain')
 // change username & password
 /* const puppeteer = require('puppeteer-extra')
 // add stealth plugin and use defaults (all evasion techniques)
@@ -33,15 +32,12 @@ const pool = mysql.createPool({
 })
 
 async function main() {
-    //const oldProxyUrl = 'http://193.164.131.202:7890'
-    //const newProxyUrl = await proxyChain.anonymizeProxy(oldProxyUrl)
     const browser = await puppeteer.launch({ 
         headless: runId ? true : false,
         //headless: true,
         args: [
             '--window-size=1920,1080',
-            '--proxy-server=http://14.143.168.230:8080',
-            //`--proxy-server=${newProxyUrl}`,
+            '--proxy-server=socks5://39.165.98.152:7302',
             '--ignore-certificate-errors',
             '--ignore-certificate-errors-spki-list '
         ],
