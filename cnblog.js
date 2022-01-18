@@ -38,19 +38,24 @@ async function postArticles(row, page) {
     .then(async () =>console.log('找到#post-title') )
     //await page.evaluate((selecter, text) => document.querySelector(selecter).value = text, '#txtTitle', row.title)
     await page.type(selecter,row.title+'破解下载')
-    await sleep(3500)
-    //await findFrames(page)
-    const frame = ( await page.mainFrame().childFrames() )[0]  //通过索引得到我的iframe
+    await sleep(500)
     //console.log('frame',await frame.$eval('body', el => el.innerHTML));
     let content = row.content.replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') 
     content = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '') 
     content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')+`<br>原文地址:<a href="${row.url_kxnn}">${row.url_kxnn}</a>`
-    //await page.type('#title',row.title)
-    //await page.$eval('#title', el => el.value = row.title) //出错，不能使用node环境中的变量 
-    //await frame.waitForSelector('#tinymce')
-    await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, '#tinymce', content)
+    selecter = '#Editor_Edit_EditorBody_ifr'
+    await page.waitForSelector(selecter)
+    .catch(async (error)=>{console.log('page: ', error.message);})
+    const elementHandle = await page.$(selecter)
+    //elementHandle.focus()
+    const frame = await elementHandle.contentFrame()
+    //const frame = ( await page.mainFrame().childFrames() )[0]  //通过索引得到我的iframe
+    selecter = 'body'
+    await frame.waitForSelector(selecter,{ timeout: 3000 })
+    .catch(async (error)=>{console.log('frame: ', error.message);})
+    await frame.evaluate((selecter, text) => document.querySelector(selecter).innerHTML = text, selecter, content)
+    await sleep(1000)
     //console.log('frame2',await frame.$eval('body', el => el.innerHTML));
-    //selecter = 'body > cnb-root > cnb-layout > div.main > div.content.grid-noGutter > div.right.grid-column-noGutter-noWrap > div > cnb-spinner > div > cnb-post-editing-v2 > cnb-post-editor > div.panel.panel--main > cnb-collapse-panel.ng-tns-c82-4.ng-star-inserted > div.panel-content.ng-tns-c82-4.ng-trigger.ng-trigger-openClosePanel > cnb-category-selector-panel > cnb-collapse-panel > div.panel-content.ng-tns-c82-6.ng-trigger.ng-trigger-openClosePanel > cnb-category-selector > div > div:nth-child(1) > label' //文章类型
     selecter = '#\\32 093554'
     await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
     await sleep(200)
