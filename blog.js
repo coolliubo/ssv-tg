@@ -81,7 +81,7 @@ async function main() {
             '--window-size=1920,1080',
             '--ignore-certificate-errors',
             '--ignore-certificate-errors-spki-list ',
-            setup.proxy.normal
+            runId ?'': setup.proxy.changeip
         ],
         defaultViewport: null,
         ignoreHTTPSErrors: true,

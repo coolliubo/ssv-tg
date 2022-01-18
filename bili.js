@@ -50,9 +50,9 @@ async function postArticles(row, page) {
     content = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '').replace(/下载/g, '**')
     content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz') + `<br>详细内容:搜索 开心牛牛 ${row.title}`
     await frame.waitForSelector('#ueditor_0', { timeout: 5000 })
-    const elementHandle = await frame.$('#ueditor_0')
+`    const elementHandle = await frame.$('#ueditor_0')
     elementHandle.focus()
-    const iframe = await elementHandle.contentFrame()
+    const iframe = await elementHandle.contentFrame()`
     //console.log('iframe',iframe.content())
     selecter = 'body'
     //await iframe.focus(selecter)

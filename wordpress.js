@@ -102,6 +102,8 @@ async function  main () {
     await sleep(200)
     //return Promise.reject(new Error('临时退出'))
     await page.click('#primary > div > main > div > div > form > div.card.login__form > div.login__form-action > button')
+    await page.waitForNavigation()
+    await sleep(200)
     selecter = '#primary > main > div.customer-home__heading > header > h1'
     await page.waitForSelector(selecter)
     .then(()=>console.log ('登录成功'))
