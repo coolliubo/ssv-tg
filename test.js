@@ -37,10 +37,10 @@ async function main() {
         //headless: true,
         args: [
             '--window-size=1920,1080',
-            //'--proxy-server=www.aiboboxx.ga:7799',
+            '--proxy-server=socks5://www.aiboboxx.ga:7899',
             '--ignore-certificate-errors',
             '--ignore-certificate-errors-spki-list ',
-            setup.proxy.changeip
+            //setup.proxy.changeip
         ],
         defaultViewport: null,
         ignoreHTTPSErrors: true,
