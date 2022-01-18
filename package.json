@@ -23,6 +23,7 @@
     "puppeteer": "^13.0.1",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
+    "puppeteer-page-proxy": "^1.2.8",
     "sqlite3": "^5.0.2"
   }
 }

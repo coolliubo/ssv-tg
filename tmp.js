@@ -1,14 +1,14 @@
 const fs = require("fs")
 //const sqlite = require('./asqlite3.js')
-//const puppeteer = require('puppeteer')
+const puppeteer = require('puppeteer')
 const core = require('@actions/core')
 const github = require('@actions/github')
-const puppeteer = require('puppeteer-extra')
+/* const puppeteer = require('puppeteer-extra')
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
-puppeteer.use(StealthPlugin())
+puppeteer.use(StealthPlugin()) */
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, findFrames  } = require('./common.js')
-const { changeContent, cutStrin, filterContent } = require('./utils.js')
+const { changeContent, filterContent } = require('./utils.js')
 Date.prototype.format = tFormat
 const mysql = require('mysql2/promise')
 const runId = github.context.runId
@@ -36,9 +36,9 @@ async function main() {
         headless: true,
         args: [
             '--window-size=1920,1080',
-            '--proxy-server=socks5://app.aiboboxx.ml:7799',
             '--ignore-certificate-errors',
-            '--ignore-certificate-errors-spki-list '
+            '--ignore-certificate-errors-spki-list ',
+            setup.proxy.changeip
         ],
         defaultViewport: null,
         ignoreHTTPSErrors: true,
