@@ -34,10 +34,10 @@ const pool = mysql.createPool({
 async function main() {
     const browser = await puppeteer.launch({ 
         headless: runId ? true : false,
-        //headless: true,
+        headless: true,
         args: [
             '--window-size=1920,1080',
-            '--proxy-server=socks5://www.aiboboxx.ga:7891',
+            '--proxy-server=socks5://clash.kxnn.xyz:7891',
             '--ignore-certificate-errors',
             '--ignore-certificate-errors-spki-list ',
             //setup.proxy.changeip
