@@ -13,7 +13,6 @@ const { changeContent,cutStrin,filterContent} = require('./utils.js')
 Date.prototype.format = tFormat
 const mysql = require('mysql2/promise')
 const runId = github.context.runId
-let browser
 let setup = {}
 if (!runId) {
   setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'))
@@ -69,7 +68,7 @@ async function postArticles(row,page) {
 }
 async function  main () {
     //console.log(await sqlite.open('./ssv.db'))
-    browser = await puppeteer.launch({
+  const  browser = await puppeteer.launch({
       headless: runId ? true : false,
       //headless: true,
       args: ['--window-size=1920,1080'],
