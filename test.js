@@ -1,13 +1,13 @@
 const fs = require("fs")
 //const sqlite = require('./asqlite3.js')
-const puppeteer = require('puppeteer')
+//const puppeteer = require('puppeteer')
 const core = require('@actions/core')
 const github = require('@actions/github')
 // change username & password
-/* const puppeteer = require('puppeteer-extra')
+const puppeteer = require('puppeteer-extra')
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
-puppeteer.use(StealthPlugin()) */
+puppeteer.use(StealthPlugin())
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5, waitForString, findFrames  } = require('./common.js')
 const { changeContent, filterContent } = require('./utils.js')
 Date.prototype.format = tFormat
