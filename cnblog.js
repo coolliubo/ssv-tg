@@ -84,7 +84,7 @@ async function main() {
             '--ignore-certificate-errors-spki-list ',
             //"--proxy-server=socks5://app.aiboboxx.ml:7799",
             //'--enable-blink-features=ShadowDOMV0,CustomElementsV0,HTMLImports',
-            setup.proxy.changeip
+            //setup.proxy.changeip
         ],
         defaultViewport: null,
         ignoreHTTPSErrors: true,

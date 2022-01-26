@@ -82,22 +82,8 @@ async function main() {
     console.log("写入cookies")
     await page.goto('https://weibo.com/536512331/home?topnav=1&wvr=6', { timeout: 60000 })
     let selecter = '#plc_top > div > div > div.gn_position > div.gn_set.S_line1 > div:nth-child(1) > a > em.W_ficon.ficon_mail.S_ficon'
-    await page.waitForSelector(selecter, { timeout: 15000 })
-    .catch(async (error)=>{
-        //console.log(await page.$eval('body', el => el.innerText))
-        console.log('login error')
-/*         selecter = 'body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div.login-box-tabs > div.login-box-tabs-items > span:nth-child(4)'
-        await page.evaluate((selecter) => document.querySelector(selecter).click(), selecter)
-        await sleep(200)
-        await page.type('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(1) > div > input', setup.usr.csdn)
-        await page.type('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(2) > div > input', setup.pwd.csdn)
-        await Promise.all([
-            page.waitForNavigation({ timeout: 60000 }),
-            //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
-            page.click('body > div.passport-container > div > div.passport-main > div.login-box > div.login-box-top > div > div.login-box-tabs-main > div > div:nth-child(4) > button'),
-        ])
-            .then(() => console.log('登录成功')) */
-    })
+    await page.waitForSelector(selecter, { timeout: 30000 })
+
     await sleep(1000)
     //cookies = await page.cookies();
     //fs.writeFileSync('./weibo.json', JSON.stringify(cookies, null, '\t'))
