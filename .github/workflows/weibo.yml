@@ -3,8 +3,8 @@ name: weibo
 on:
   repository_dispatch:
   workflow_dispatch:
-  schedule:
-    - cron: '35 */8 * * *'
+  #schedule:
+  #  - cron: '35 */8 * * *'
   watch:
     types: started
     

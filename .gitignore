@@ -108,3 +108,4 @@ dist
 setup.json
 .history/
 *.db
+zpush.sh

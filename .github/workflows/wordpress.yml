@@ -3,8 +3,8 @@ name: wordpress
 on:
   repository_dispatch:
   workflow_dispatch:
-  schedule:
-    - cron: '15 4 * * *'
+  #schedule:
+  #  - cron: '15 4 * * *'
   watch:
     types: started
     

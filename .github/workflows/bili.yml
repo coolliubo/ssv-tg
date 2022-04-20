@@ -3,8 +3,8 @@ name: bili
 on:
   repository_dispatch:
   workflow_dispatch:
-  schedule:
-    - cron: '15 2 * * *'
+  #schedule:
+  #  - cron: '15 2 * * *'
   watch:
     types: started
     

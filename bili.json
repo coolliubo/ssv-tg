@@ -238,20 +238,6 @@
 		"sourcePort": 80
 	},
 	{
-		"name": "fingerprint3",
-		"value": "b6b5f538589a2e483b2b1da187d3f65b",
-		"domain": ".bilibili.com",
-		"path": "/",
-		"expires": 1673706771,
-		"size": 44,
-		"httpOnly": false,
-		"secure": false,
-		"session": false,
-		"sameParty": false,
-		"sourceScheme": "Secure",
-		"sourcePort": 443
-	},
-	{
 		"name": "fingerprint_s",
 		"value": "ef7b7ee94b7b86a3c45bbab63be61315",
 		"domain": ".bilibili.com",
@@ -278,6 +264,20 @@
 		"sameParty": false,
 		"sourceScheme": "NonSecure",
 		"sourcePort": 80
+	},
+	{
+		"name": "fingerprint3",
+		"value": "b6b5f538589a2e483b2b1da187d3f65b",
+		"domain": ".bilibili.com",
+		"path": "/",
+		"expires": 1673706771,
+		"size": 44,
+		"httpOnly": false,
+		"secure": false,
+		"session": false,
+		"sameParty": false,
+		"sourceScheme": "Secure",
+		"sourcePort": 443
 	},
 	{
 		"name": "innersign",

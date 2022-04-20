@@ -42,7 +42,7 @@ async function postArticles(row, page) {
     //console.log('frame',await frame.$eval('body', el => el.innerHTML));
     let content = row.content.replace(/https:\/\/www.kxnn.xyz\/vip/g,'******') 
     content = content.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '') 
-    content = content.replace(/www.cmdw.top/g,'www.kxnn.xyz')+`<br>原文地址:<a href="${row.url_kxnn}">${row.url_kxnn}</a>`
+    content = content.replace(/www.cmdw.top/g,'www.kxyz.eu.org')+`<br>原文地址:<a href="${row.url_kxnn}">${row.url_kxnn}</a>`
     selecter = '#Editor_Edit_EditorBody_ifr'
     await page.waitForSelector(selecter)
     .catch(async (error)=>{console.log('page: ', error.message);})
